@@ -7,6 +7,7 @@ temp="temp.txt"
 import="import.txt"
 template1="./templates/DockerTemplate1"
 template2="./templates/DockerTemplate2"
+dockerFile="DockerFile"
 
 sed "s/[<=>]\{1,\}/:/" < $filename > $formatedfile
 
@@ -14,8 +15,6 @@ regexpython='python[:]{1,}[0-9]{1,}.{1}[0-9]{1,}.{1}[0-9]{1,}'
 regexpip='pip[:]{1}'
 regexname='name[:]{1}'
 
-array=()
-flag=false
 aux=0
 auxini=0
 auxend=0
@@ -31,42 +30,31 @@ while read line; do
             auxend=$((aux-1))
         fi
     done <$filename
-declare -p array
-
-#newformated=$(sed '3i New Line with sed' $formatedfile)
-#echo $newformated > $formatedfile
 
 sed "${auxini},${auxend}!d" < $filename > $dependencies.temp
 sed "s/  - /RUN pip install /" < $dependencies.temp > $dependencies
-
 rm $dependencies.temp
-pyversion=""
+
+pythonversion=""
+
 while read line; do
         if [[ $line =~ $regexpython ]]
         then
-            pyversion=$line
-            #IFS='='
-            #read -a strarr <<< "$line"
-            #for val in "${strarr[@]}";
-            #do
-            #    array+=("$val")
-            #done
-            #flag=true
+            pythonversion=$line
         fi
     done <$formatedfile
 
-echo $pyversion > temp.txt
+echo "$pythonversion" > temp.txt
 sed "s/- /FROM /" < temp.txt > $import
 rm $temp
 rm $formatedfile
-echo $pyversion
 
-cat $import > DockerFile
+cat $import > $dockerFile
 rm $import
 
-cat $template1 >> DockerFile
+cat $template1 >> $dockerFile
 
-cat $dependencies >> DockerFile
+cat $dependencies >> $dockerFile
 rm $dependencies
 
-cat $template2 >> DockerFile
+cat $template2 >> $dockerFile
