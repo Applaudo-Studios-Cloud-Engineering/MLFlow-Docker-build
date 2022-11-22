@@ -1,7 +1,7 @@
 # Build image
 
-`docker build -t mleon96/mlflow:latest -t mleon96/mlflow:1.0.0 .`
+`docker build -t mleon96/mlflow:latest -t mleon96/mlflow:1.0.0 ./docker-resources`
 
-` docker run --port External-port:Internal-port -itd image-name `
+`docker run --port External-port:Internal-port -itd image-name`
 
-` docker run -p 5000:5000 -itd mleon96/mlflow:latest `
+`docker run -p 5000:5000 -itd mleon96/mlflow:latest`
