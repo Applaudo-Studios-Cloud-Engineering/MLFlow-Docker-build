@@ -1,0 +1,14 @@
+
+RUN apt-get update 
+RUN apt-get install -y git
+
+# Copy over artifact and code
+COPY ./run.sh /opt/mlflow/scripts/
+
+# COPY model_format.py /opt/mlflow/utils/
+COPY ./temp_artifacts/* ${ARTIFACT_STORE}/
+
+RUN chmod +x /opt/mlflow/scripts/run.sh 
+
+ENTRYPOINT ["/usr/bin/env"]
+CMD ["bash", "/opt/mlflow/scripts/run.sh"]

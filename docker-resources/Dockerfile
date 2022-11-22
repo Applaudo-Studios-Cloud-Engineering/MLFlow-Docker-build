@@ -1,4 +1,5 @@
 FROM python:3.7.15
+
 ARG RUN_ID
 ARG MODEL_NAME
 
@@ -11,13 +12,12 @@ ENV PYTHONPATH /opt/mlflow/utils
 RUN mkdir -p /opt/mlflow/scripts \
 && mkdir -p ${FILE_STORE} \
 && mkdir -p ${ARTIFACT_STORE}
+RUN pip install mlflow
+RUN pip install cloudpickle==2.2.0
+RUN pip install scikit-learn==1.0.2
 
-RUN pip install pandas \
-&& pip install scikit-learn==1.0.2 \
-&& pip install cloudpickle==2.2.0 \
-&& pip install mlflow \
-&& apt-get update \
-&& apt-get install -y git
+RUN apt-get update 
+RUN apt-get install -y git
 
 # Copy over artifact and code
 COPY ./run.sh /opt/mlflow/scripts/
