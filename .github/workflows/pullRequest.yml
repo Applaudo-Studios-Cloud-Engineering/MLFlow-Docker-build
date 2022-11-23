@@ -41,6 +41,14 @@ jobs:
           echo ${{ steps.vars.outputs.tag }}
           ls ./docker_resources/temp_artifacts/
 
+      - name: Test DockerFile script
+        shell: bash
+        run: |
+          cd ./docker_resources/
+          ls 
+          ./regex.bash
+          echo $(cat DockerFile)
+
       # - uses: repo-sync/pull-request@v2
       #   name: pull-request
       #   with:
