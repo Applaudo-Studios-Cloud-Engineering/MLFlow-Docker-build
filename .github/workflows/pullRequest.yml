@@ -11,11 +11,13 @@ jobs:
       - uses: actions/checkout@v3
         name: checkout
 
-      - name: Exit if not on test branch
-        run: echo ${{github.event.base_ref}}
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
 
       - name: Exit if not on test branch
-        if: endsWith(github.event.base_ref, 'test') == false
+        if: endsWith(${{ steps.extract_branch.outputs.branch }}, 'test') == false
         run: exit -1
 
       - name: Set output
