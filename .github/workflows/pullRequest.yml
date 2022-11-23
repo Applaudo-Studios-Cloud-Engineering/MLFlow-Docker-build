@@ -13,7 +13,7 @@ jobs:
 
       - name: Run ID
         id: run_id
-        run: echo "id=$(sed "4;d" build_data.txt)" >> $GITHUB_OUTPUT
+        run: echo "id=$(sed "4q;d" build_data.txt)" >> $GITHUB_OUTPUT
 
       - name: branch or tag
         run: echo ${{ steps.run_id.outputs.id }}
