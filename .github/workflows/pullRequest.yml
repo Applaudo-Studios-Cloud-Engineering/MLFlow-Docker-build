@@ -1,0 +1,40 @@
+name: CI
+on:
+  push:
+    tags:
+      - v*.*.*
+jobs:
+  pull-request:
+    name: Open PR to main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: checkout
+
+      - name: Exit if not on test branch
+        run: echo ${{github.event.base_ref}}
+
+      - name: Exit if not on test branch
+        if: endsWith(github.event.base_ref, 'test') == false
+        run: exit -1
+
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+      - name: Check output
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}
+
+      # - uses: repo-sync/pull-request@v2
+      #   name: pull-request
+      #   with:
+      #     destination_branch: "main"
+      #     pr_title: "Pulling ${{ github.ref }} into main"
+      #     pr_body: "👑 *An automated PR*"
+      #     pr_reviewer: "mdeleon"
+      #     pr_draft: true
+      #     github_token: ${{ secrets.TOKEN_REPOSITORY }}
