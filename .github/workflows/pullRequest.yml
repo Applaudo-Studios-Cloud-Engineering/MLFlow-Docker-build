@@ -3,6 +3,8 @@ on:
   push:
     tags:
       - v*.*.*
+    branches:
+      - test
 jobs:
   pull-request:
     name: Open PR to main
@@ -14,6 +16,9 @@ jobs:
       - name: Branch name
         id: branch_name
         run: echo ::set-output name=branch::${GITHUB_REF##*/}
+
+      - name: branch
+        run: echo ${{ steps.branch_name.outputs.branch }}
 
       - name: Exit if not on test branch
         if: endsWith(steps.branch_name.outputs.branch, 'test') == false
