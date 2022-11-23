@@ -46,6 +46,7 @@ jobs:
         run: |
           cd ./docker_resources/
           ls 
+          chmod 755 ./regex.bash
           ./regex.bash
           echo $(cat DockerFile)
 
