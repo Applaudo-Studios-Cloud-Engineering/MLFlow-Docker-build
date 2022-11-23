@@ -15,7 +15,7 @@ jobs:
         id: run_id
         run: echo "id=$(sed "4q;d" build_data.txt)" >> $GITHUB_OUTPUT
 
-      - name: branch or tag
+      - name: Run ID output
         run: echo ${{ steps.run_id.outputs.id }}
 
       - id: auth
@@ -28,10 +28,10 @@ jobs:
 
       - name: Use gcloud CLI
         env:
-          BUCKET: ${{ secrets.bucket_name }}
-          LOCATION_ROOT: ${{ secrets.location_root }}
-          EXPERIMENT_ID: ${{ secrets.experiment_id }}
-        run: gsutil -m cp -r "gs://$BUCKET/$LOCATION_ROOT/$EXPERIMENT_ID/$RUN_ID/artifacts/model/*" ./docker_resources/temp_artifacts/
+          BUCKET: ${{ secrets.BUCKET_NAME }}
+          LOCATION_ROOT: ${{ secrets.LOCATION_ROOT }}
+          EXPERIMENT_ID: ${{ secrets.EXPERIMENT_ID }}
+        run: gsutil -m cp -r "gs://$BUCKET/$LOCATION_ROOT/$EXPERIMENT_ID/${{ steps.run_id.outputs.id }}/artifacts/model/*" ./docker_resources/temp_artifacts/
 
       - name: Check output
         env:
@@ -39,6 +39,7 @@ jobs:
         run: |
           echo $RELEASE_VERSION
           echo ${{ steps.vars.outputs.tag }}
+          ls ./docker_resources/temp_artifacts/
 
       # - uses: repo-sync/pull-request@v2
       #   name: pull-request
