@@ -12,10 +12,11 @@ jobs:
         name: checkout
 
       - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
+        id: branch_name
+        run: echo ::set-output name=branch::${GITHUB_REF##*/}
 
       - name: Exit if not on test branch
-        if: endsWith(GITHUB_REF##*/, 'test') == false
+        if: endsWith(steps.branch_name.outputs.branch, 'test') == false
         run: exit -1
 
       - name: Set output
