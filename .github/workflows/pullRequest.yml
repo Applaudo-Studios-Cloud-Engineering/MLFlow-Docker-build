@@ -15,7 +15,7 @@ jobs:
         run: echo running on branch ${GITHUB_REF##*/}
 
       - name: Exit if not on test branch
-        if: endsWith(${GITHUB_REF##*/}, 'test') == false
+        if: endsWith(${{GITHUB_REF##*/}}, 'test') == false
         run: exit -1
 
       - name: Set output
