@@ -32,7 +32,7 @@ while read line; do
     done <$filename
 
 sed "${auxini},${auxend}!d" < $filename > $dependencies.temp
-sed "s/  - /RUN pip install /" < $dependencies.temp > $dependencies
+sed "s/[ ]\{1,\}[-]\{1\}[ ]\{1\}/RUN pip install /" < $dependencies.temp > $dependencies
 rm $dependencies.temp
 
 pythonversion=""
@@ -45,7 +45,7 @@ while read line; do
     done <$formatedfile
 
 echo "$pythonversion" > temp.txt
-sed "s/- /FROM /" < temp.txt > $import
+sed "s/[-]\{1\}[ ]\{1\}/FROM /" < temp.txt > $import
 rm $temp
 rm $formatedfile
 
