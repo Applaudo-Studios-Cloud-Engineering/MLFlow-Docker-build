@@ -10,8 +10,8 @@ ENV ARTIFACT_STORE /opt/mlflow/artifactStore
 ENV PYTHONPATH /opt/mlflow/utils
 
 RUN mkdir -p /opt/mlflow/scripts \
-    && mkdir -p ${FILE_STORE} \
-    && mkdir -p ${ARTIFACT_STORE}
+&& mkdir -p ${FILE_STORE} \
+&& mkdir -p ${ARTIFACT_STORE}
 RUN pip install mlflow
 RUN pip install cloudpickle==2.2.0
 RUN pip install scikit-learn==1.0.2
