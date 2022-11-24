@@ -15,9 +15,6 @@ jobs:
         id: run_id
         run: echo "id=$(sed "4q;d" build_data.txt)" >> $GITHUB_OUTPUT
 
-      - name: Run ID output
-        run: echo ${{ steps.run_id.outputs.id }}
-
       - id: auth
         uses: google-github-actions/auth@v0
         with:
@@ -33,22 +30,12 @@ jobs:
           EXPERIMENT_ID: ${{ secrets.EXPERIMENT_ID }}
         run: gsutil -m cp -r "gs://$BUCKET/$LOCATION_ROOT/$EXPERIMENT_ID/${{ steps.run_id.outputs.id }}/artifacts/model/*" ./docker_resources/temp_artifacts/
 
-      - name: Check output
-        env:
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
-        run: |
-          echo $RELEASE_VERSION
-          echo ${{ steps.vars.outputs.tag }}
-          ls ./docker_resources/temp_artifacts/
-
       - name: Test DockerFile script
         shell: bash
         run: |
           cd ./docker_resources/
-          ls 
           chmod 755 ./regex.bash
           ./regex.bash
-          echo $(cat DockerFile)
 
       - uses: EndBug/add-and-commit@v9
         with:
@@ -63,5 +50,5 @@ jobs:
           pr_title: "Pulling ${{ github.ref }} into main"
           pr_body: "👑 *An automated PR*"
           # pr_reviewer: "mdeleon"
-          # pr_draft: true test
+          # pr_draft: true
           github_token: ${{ secrets.TOKEN_REPOSITORY }}

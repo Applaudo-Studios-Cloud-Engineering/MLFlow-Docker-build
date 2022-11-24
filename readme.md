@@ -6,6 +6,6 @@
 
 `docker run -p 5000:5000 -itd mleon96/mlflow:latest`
 
-## Changes for test
+## Flow
 
-test
+This repo flow is made to first change te build_data.txt in the build and version if needed for the creation with the action of the DockerFile and it will generate said changes in the branch test with a pull request for the main branch that will have the build of the image when accepted the pull request
