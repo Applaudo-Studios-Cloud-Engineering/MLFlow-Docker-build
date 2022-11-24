@@ -1,0 +1,42 @@
+name: CD
+on:
+  push:
+    branches:
+      - main
+      - master
+# env:
+#   STATE_RELEASE_VERSION: 1.1.0
+jobs:
+  build-and-deploy:
+    name: Build Container Registry image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: checkout
+
+      - name: Login to gcloud registry
+        id: gcloud
+        uses: elgohr/gcloud-login-action@v1
+        with:
+          account_key: ${{ secrets.GCLOUD_KEY }}
+      
+      - name: Image Version
+        id: image_version
+        run: echo "version=$(sed "2q;d" build_data.txt)" >> $GITHUB_OUTPUT
+
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@v4
+        # env:
+          # USER: ${{ secrets.HTPASSWD_USER }}
+          # PASSWORD: ${{ secrets.HTPASSWD_PASSWORD }}
+          # GCP_USER: ${{ steps.gcloud.outputs.username }}
+          # GCP_PASSWORD: ${{ steps.gcloud.outputs.password }}
+        with:
+          name: ${{secrets.PROJECT_NAME}}/mlflow-model
+          username: ${{ steps.gcloud.outputs.username }}
+          password: ${{ steps.image_version.outputs.password }}
+          registry: us.gcr.io
+          tags: "latest,${{steps.gcloud.outputs.version}}"
+          # ${{ env.STATE_RELEASE_VERSION }}
+          dockerfile: ./docker_resources/DockerFile
+          buildargs: USER,PASSWORD
