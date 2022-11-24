@@ -62,5 +62,5 @@ jobs:
           pr_title: "Pulling ${{ github.ref }} into main"
           pr_body: "👑 *An automated PR*"
           # pr_reviewer: "mdeleon"
-          # pr_draft: true
+          # pr_draft: true test
           github_token: ${{ secrets.TOKEN_REPOSITORY }}
