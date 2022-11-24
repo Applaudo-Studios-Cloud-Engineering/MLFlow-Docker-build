@@ -50,27 +50,17 @@ jobs:
           ./regex.bash
           echo $(cat DockerFile)
 
-      - uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
+      - uses: EndBug/add-and-commit@v9
         with:
-
-          # Determines the way the action fills missing author name and email. Three options are available:
-          # - github_actor -> UserName <UserName@users.noreply.github.com>
-          # - user_info -> Your Display Name <your-actual@email.com>
-          # - github_actions -> github-actions <email associated with the github logo>
-          # Default: github_actor
           default_author: github_actions
-
-          # The message for the commit.
-          # Default: 'Commit from GitHub Actions (name of the workflow)'
           message: 'CI Pipeline auto'
 
-      # - uses: repo-sync/pull-request@v2
-      #   name: pull-request
-      #   with:
-      #     destination_branch: "main"
-      #     pr_title: "Pulling ${{ github.ref }} into main"
-      #     pr_body: "👑 *An automated PR*"
-      #     pr_reviewer: "mdeleon"
-      #     pr_draft: true
-      #     github_token: ${{ secrets.TOKEN_REPOSITORY }}
-      #test
+      - name: Pull Request
+        uses: repo-sync/pull-request@v2.9
+        with:
+          destination_branch: "main"
+          pr_title: "Pulling ${{ github.ref }} into main"
+          pr_body: "👑 *An automated PR*"
+          # pr_reviewer: "mdeleon"
+          # pr_draft: true
+          github_token: ${{ secrets.TOKEN_REPOSITORY }}
