@@ -34,9 +34,9 @@ jobs:
         with:
           name: ${{secrets.PROJECT_NAME}}/mlflow-model
           username: ${{ steps.gcloud.outputs.username }}
-          password: ${{ steps.image_version.outputs.password }}
+          password: ${{ steps.gcloud.outputs.password }}
           registry: us.gcr.io
-          tags: "latest,${{steps.gcloud.outputs.version}}"
+          tags: "latest,${{steps.image_version.outputs.version}}"
           # ${{ env.STATE_RELEASE_VERSION }}
           dockerfile: ./docker_resources/DockerFile
-          buildargs: USER,PASSWORD
+          # buildargs: USER,PASSWORD
