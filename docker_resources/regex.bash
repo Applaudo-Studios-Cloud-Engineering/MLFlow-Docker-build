@@ -7,7 +7,7 @@ temp="temp.txt"
 import="import.txt"
 template1="./templates/DockerTemplate1"
 template2="./templates/DockerTemplate2"
-dockerFile="DockerFile"
+dockerFile="Dockerfile"
 
 sed "s/[<=>]\{1,\}/:/" < $filename > $formatedfile
 
