@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   mlflow-helm-chart:
   - apiVersion: v2
+    appVersion: v1.0.9-mnist
+    created: "2022-12-08T22:50:07.134801805Z"
+    description: A Helm chart for Kubernetes
+    digest: 3b811fcbefa0cceeae04b2fe42764c6f293c089ec28c9e4c2737ad29e1c44721
+    name: mlflow-helm-chart
+    type: application
+    urls:
+    - https://github.com/Applaudo-Studios-Cloud-Engineering/MLFlow-Docker-build/releases/download/mlflow-helm-chart-0.4.0/mlflow-helm-chart-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
     appVersion: v1.0.9
     created: "2022-11-29T23:53:36.856482344Z"
     description: A Helm chart for Kubernetes
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/Applaudo-Studios-Cloud-Engineering/MLFlow-Docker-build/releases/download/mlflow-helm-chart-0.3.0/mlflow-helm-chart-0.3.0.tgz
     version: 0.3.0
-generated: "2022-11-29T23:53:36.856486844Z"
+generated: "2022-12-08T22:50:07.134815305Z"
