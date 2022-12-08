@@ -1,4 +1,4 @@
-FROM python:3.7.15
+FROM python:3.9.15
 
 ARG RUN_ID
 ARG MODEL_NAME
@@ -13,8 +13,13 @@ RUN mkdir -p /opt/mlflow/scripts \
 && mkdir -p ${FILE_STORE} \
 && mkdir -p ${ARTIFACT_STORE}
 RUN pip install mlflow
-RUN pip install cloudpickle==2.2.0
-RUN pip install scikit-learn==1.0.2
+RUN pip install fsspec==2022.11.0
+RUN pip install google-api-python-client==1.12.11
+RUN pip install google-cloud-storage==1.44.0
+RUN pip install pandas==1.5.2
+RUN pip install pillow==9.3.0
+RUN pip install scipy==1.9.3
+RUN pip install tensorflow==2.11.0
 
 RUN apt-get update 
 RUN apt-get install -y git
