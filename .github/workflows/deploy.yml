@@ -38,5 +38,5 @@ jobs:
           registry: us.gcr.io
           tags: "latest,${{steps.image_version.outputs.version}}"
           # ${{ env.STATE_RELEASE_VERSION }}
-          dockerfile: ./docker_resources/DockerFile
+          dockerfile: ./docker_resources/Dockerfile
           # buildargs: USER,PASSWORD
