@@ -1,4 +1,4 @@
 version
-v1.0.9-mnist
+v1.0.10-titanic
 run
-cc04c2ae024a4e279104dedd1a7fefc6
+04778e96e207425fa1b6bac4c5c8cfd3
