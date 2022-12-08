@@ -1,4 +1,4 @@
 version
-v1.0.9
+v1.0.9-mnist
 run
 cc04c2ae024a4e279104dedd1a7fefc6
