@@ -23,12 +23,29 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
 
+      - name: Clean temp_artifacts directory
+        shell: bash
+        run: |
+          rm -r ./docker_resources/temp_artifacts/*
+
       - name: Use gcloud CLI
         env:
           BUCKET: ${{ secrets.BUCKET_NAME }}
           LOCATION_ROOT: ${{ secrets.LOCATION_ROOT }}
           EXPERIMENT_ID: ${{ secrets.EXPERIMENT_ID }}
         run: gsutil -m cp -r "gs://$BUCKET/$LOCATION_ROOT/$EXPERIMENT_ID/${{ steps.run_id.outputs.id }}/artifacts/model/*" ./docker_resources/temp_artifacts/
+
+      - name: Check file existence
+        id: check_files
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "./docker_resources/temp_artifacts/data/*.h5"
+
+      - name: File exists
+        if: steps.check_files.outputs.files_exists == 'true'
+        shell: bash
+        run: |
+          mv ./docker_resources/temp_artifacts/data/*.h5 ./docker_resources/temp_artifacts/data.h5
 
       - name: Test DockerFile script
         shell: bash
