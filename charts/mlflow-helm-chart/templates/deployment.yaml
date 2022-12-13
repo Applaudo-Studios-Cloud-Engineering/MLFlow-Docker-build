@@ -38,12 +38,14 @@ spec:
               containerPort: 5000
               protocol: TCP
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /health
               port: http
             initialDelaySeconds: 15
             periodSeconds: 20
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /health
               port: http
             initialDelaySeconds: 5
             periodSeconds: 10
