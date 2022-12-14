@@ -17,3 +17,7 @@ This repo flow is made to first change te build_data.txt in the build and versio
 `kubectl create secret docker-registry gcr-json-key  --docker-server=us.gcr.io  --docker-username=_json_key  --docker-password="$(cat ~/mlops-kubeflow-tests-38867ad95dd0.json)"  --docker-email=253107550346-compute@developer.gserviceaccount.com -n mlflow`
 
 `helm install mlflow-helm-chart mlflow-helm-chart -n mlflow`
+
+## MlFlow
+
+Added functions of mlflow autolog that depending of the base library of machine learning needs to be checked if available
