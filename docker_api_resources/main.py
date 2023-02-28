@@ -45,48 +45,51 @@ class Response(BaseModel):
 class ResponseFormatted(BaseModel):
     predictions: List[str]
 
+class ResponseJson(BaseModel):
+    response: str
+
 app = FastAPI()
 
-@app.get("/my-first-api-0")
-def hello0():
-  return {"Hello world!"}
+# @app.get("/my-first-api-0")
+# def hello0():
+#   return {"Hello world!"}
 
 
-@app.get("/my-first-api-1")
-def hello1(name = None):
+# @app.get("/my-first-api-1")
+# def hello1(name = None):
 
-    if name is None:
-        text = 'Hello!'
+#     if name is None:
+#         text = 'Hello!'
 
-    else:
-        text = 'Hello ' + name + '!'
+#     else:
+#         text = 'Hello ' + name + '!'
 
-    return text
+#     return text
 
 
-@app.get("/get-iris")
-def get_iris():
+# @app.get("/get-iris")
+# def get_iris():
 
-    import pandas as pd
-    url ='https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv'
-    iris = pd.read_csv(url)
+#     import pandas as pd
+#     url ='https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv'
+#     iris = pd.read_csv(url)
 
-    return iris
+#     return iris
 
-@app.get("/plot-iris")
-def plot_iris():
+# @app.get("/plot-iris")
+# def plot_iris():
 
-    import pandas as pd
-    import matplotlib.pyplot as plt
+#     import pandas as pd
+#     import matplotlib.pyplot as plt
 
-    url ='https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv'
-    iris = pd.read_csv(url)
+#     url ='https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv'
+#     iris = pd.read_csv(url)
 
-    plt.scatter(iris['sepal_length'], iris['sepal_width'])
-    plt.savefig('iris.png')
-    file = open('iris.png', mode="rb")
+#     plt.scatter(iris['sepal_length'], iris['sepal_width'])
+#     plt.savefig('iris.png')
+#     file = open('iris.png', mode="rb")
 
-    return StreamingResponse(file, media_type="image/png")
+#     return StreamingResponse(file, media_type="image/png")
 
 @app.post("/invocations")
 def invocations(item1: RequestInvocations) -> ResponseFormatted:
@@ -128,7 +131,7 @@ def invocations(item1: RequestInvocations) -> ResponseFormatted:
     env = os.environ['MLFLOW_ENDPOINT']
     
     print(env)
-    response = requests.post(env,json=json)
+    response = requests.post((env + '/invocations'), json=json)
 
     responseJson= Response(predictions=response.json().get('predictions'))
 
@@ -144,3 +147,63 @@ def invocations(item1: RequestInvocations) -> ResponseFormatted:
 #     print(json)
 #     response = requests.post("http://localhost:5000/invocations",json=json)
 #     return response.json()
+
+@app.post("/invocations2")
+def invocations2(item1: Columns) -> ResponseJson:
+    list = []
+    aux = []
+    columns = []
+
+    columns.append('Gender')
+    aux.append(float(0) if item1.Gender == 'Male' else float(1))
+        
+    columns.append('Married')
+    aux.append(float(0) if item1.Married == 'No' else float(1))
+    
+    columns.append('Dependents')
+    item1.Dependents.replace("3+", "3")
+    aux.append(float(item1.Dependents))
+
+    columns.append('Education')
+    aux.append(float(0) if item1.Education == 'Not Graduate' else float(1))
+
+    columns.append('Self_Employed')
+    aux.append(float(0) if item1.Self_Employed == 'No' else float(1))
+
+    columns.append('ApplicantIncome')
+    aux.append(float(item1.ApplicantIncome))
+    
+    columns.append('CoapplicantIncome')
+    aux.append(float(item1.CoapplicantIncome))
+
+    columns.append('LoanAmount')
+    aux.append(float(item1.LoanAmount))
+
+    columns.append('Loan_Amount_Term')
+    aux.append(float(item1.Loan_Amount_Term))
+
+    columns.append('Credit_History')
+    aux.append(float(item1.Credit_History))
+    
+    columns.append('Property_Area')
+    aux.append(float(0) if item1.Property_Area == 'Urban' else float(1) if item1.Property_Area == 'Semiurban' else float(2))
+
+    columns.append('Total_Income')
+    aux.append(float(item1.Total_Income))
+    
+    list.append(aux)
+
+    item2 = RequestInvocationsFormatted(dataframe_split=ItemFormatted(columns=columns,data=list))
+    json = jsonable_encoder(item2)
+    env = os.environ['MLFLOW_ENDPOINT']
+    
+    print(env)
+    response = requests.post((env + '/invocations'), json=json)
+
+    responseJson= Response(predictions=response.json().get('predictions'))
+
+    response=''
+    for value in responseJson.predictions:
+        response = "No" if value == 0 else "Yes"
+
+    return ResponseJson(response=response)
