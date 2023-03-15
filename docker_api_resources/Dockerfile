@@ -13,7 +13,10 @@ RUN mkdir -p /opt/fastapi/scripts \
 RUN pip install fastapi
 RUN pip install "uvicorn[standard]"
 RUN pip install requests
-RUN pip install psycopg2-binary 
+# RUN pip install psycopg2-binary 
+# RUN pip install configparser
+# RUN pip install MySQL-python
+RUN pip install mysqlclient
 RUN pip install sqlalchemy
 
 RUN apt-get update 
