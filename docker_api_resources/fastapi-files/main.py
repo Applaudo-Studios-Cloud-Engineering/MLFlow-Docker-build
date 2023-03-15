@@ -1,98 +1,69 @@
-# pip install fastapi
-# pip install uvicorn
-# pip install "uvicorn[standard]" # for deploy
-# uvicorn main:app --reload
-# uvicorn main:app --host 0.0.0.0 --port 80 for deploy
-from typing import List, Union
-from fastapi import FastAPI
+# uvicorn sql_app.main:app --reload
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
-import array 
+
 import requests
 import os
 
-class Columns(BaseModel):
-    Gender: str
-    Married: str
-    Dependents: str
-    Education: str
-    Self_Employed: str
-    ApplicantIncome: float
-    CoapplicantIncome: float
-    LoanAmount: float
-    Loan_Amount_Term: float
-    Credit_History: float
-    Property_Area: float
-    Total_Income: float
+import crud, models, schemas
+from database import SessionLocal, engine
 
-class Item(BaseModel):
-    columns: List[str] #Columns
-    data: List[List[str]]
+# docker inspect distracted_johnson | grep IPAddress
+# If running uvicorn sql_app.main:app --reload change crud models
+# from . import crud, models, schemas
+# from .database import SessionLocal, engine
 
-class ItemFormatted(BaseModel):
-    columns: List[str] = []
-    data: List[List[float]]
-
-class RequestInvocationsFormatted(BaseModel):
-    dataframe_split: ItemFormatted
-
-class RequestInvocations(BaseModel):
-    dataframe_split: Item
-
-class Response(BaseModel):
-    predictions: List[float]
-
-class ResponseFormatted(BaseModel):
-    predictions: List[str]
-
-class ResponseJson(BaseModel):
-    response: str
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# @app.get("/my-first-api-0")
-# def hello0():
-#   return {"Hello world!"}
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
-# @app.get("/my-first-api-1")
-# def hello1(name = None):
-
-#     if name is None:
-#         text = 'Hello!'
-
-#     else:
-#         text = 'Hello ' + name + '!'
-
-#     return text
+@app.post("/models/", response_model=schemas.Model)
+def create_model(model: schemas.ModelCreate, db: Session = Depends(get_db)):
+    db_model = crud.get_model_by_model_id(db, model_id=model.model_id)
+    if db_model:
+        raise HTTPException(status_code=400, detail="Model already registered")
+    return crud.create_model(db=db, model=model)
 
 
-# @app.get("/get-iris")
-# def get_iris():
+@app.get("/models/", response_model=list[schemas.Model])
+def read_models(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    models = crud.get_models(db, skip=skip, limit=limit)
+    return models
 
-#     import pandas as pd
-#     url ='https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv'
-#     iris = pd.read_csv(url)
 
-#     return iris
+@app.get("/models/{model_id}", response_model=schemas.Model)
+def read_model(model_id: int, db: Session = Depends(get_db)):
+    db_model = crud.get_model(db, model_id=model_id)
+    if db_model is None:
+        raise HTTPException(status_code=404, detail="Model not found")
+    return db_model
 
-# @app.get("/plot-iris")
-# def plot_iris():
+# {'title': 'item1', 'description': 'description1', 'owner_id': 4} example
+@app.post("/models/{model_id}/opinions/", response_model=schemas.Opinion)
+def create_opinion_for_model(
+    model_id: int, opinion: schemas.OpinionCreate, db: Session = Depends(get_db)
+):
+    return crud.create_model_opinion(db=db, opinion=opinion, model_id=model_id)
 
-#     import pandas as pd
-#     import matplotlib.pyplot as plt
 
-#     url ='https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv'
-#     iris = pd.read_csv(url)
+@app.get("/opinions/", response_model=list[schemas.Opinion])
+def read_opinions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    opinions = crud.get_opinions(db, skip=skip, limit=limit)
+    return opinions
 
-#     plt.scatter(iris['sepal_length'], iris['sepal_width'])
-#     plt.savefig('iris.png')
-#     file = open('iris.png', mode="rb")
-
-#     return StreamingResponse(file, media_type="image/png")
-
-@app.post("/invocations")
-def invocations(item1: RequestInvocations) -> ResponseFormatted:
+@app.post("/invocations", response_model=schemas.ResponseFormatted)
+def invocations(item1: schemas.RequestInvocations):
     list = []
     for value  in item1.dataframe_split.data:
         aux = []
@@ -126,20 +97,20 @@ def invocations(item1: RequestInvocations) -> ResponseFormatted:
                 aux.append(float(dataValue))
         list.append(aux)
 
-    item2 = RequestInvocationsFormatted(dataframe_split=ItemFormatted(columns=item1.dataframe_split.columns,data=list))
+    item2 = schemas.RequestInvocationsFormatted(dataframe_split=schemas.ItemFormatted(columns=item1.dataframe_split.columns,data=list))
     json = jsonable_encoder(item2)
     env = os.environ['MLFLOW_ENDPOINT']
     
     print(env)
     response = requests.post((env + '/invocations'), json=json)
 
-    responseJson= Response(predictions=response.json().get('predictions'))
+    responseJson= schemas.Response(predictions=response.json().get('predictions'))
 
     list = []
     for value in responseJson.predictions:
         list.append("N" if value == 0 else "Y")
 
-    return ResponseFormatted(predictions=list)
+    return schemas.ResponseFormatted(predictions=list)
 
 # @app.post("/invocations2")
 # def invocations(requestInvocationsFormatted: RequestInvocationsFormatted):
@@ -148,8 +119,8 @@ def invocations(item1: RequestInvocations) -> ResponseFormatted:
 #     response = requests.post("http://localhost:5000/invocations",json=json)
 #     return response.json()
 
-@app.post("/invocations2")
-def invocations2(item1: Columns) -> ResponseJson:
+@app.post("/invocations2", response_model=schemas.ResponseJson)
+def invocations2(item1: schemas.Columns):
     list = []
     aux = []
     columns = []
@@ -193,17 +164,17 @@ def invocations2(item1: Columns) -> ResponseJson:
     
     list.append(aux)
 
-    item2 = RequestInvocationsFormatted(dataframe_split=ItemFormatted(columns=columns,data=list))
+    item2 = schemas.RequestInvocationsFormatted(dataframe_split=schemas.ItemFormatted(columns=columns,data=list))
     json = jsonable_encoder(item2)
     env = os.environ['MLFLOW_ENDPOINT']
     
     print(env)
     response = requests.post((env + '/invocations'), json=json)
 
-    responseJson= Response(predictions=response.json().get('predictions'))
+    responseJson= schemas.Response(predictions=response.json().get('predictions'))
 
     response=''
     for value in responseJson.predictions:
         response = "No" if value == 0 else "Yes"
 
-    return ResponseJson(response=response)
+    return schemas.ResponseJson(response=response)
