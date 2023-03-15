@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float,BIGINT, TEXT ,BOOLEAN
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -8,10 +8,10 @@ from database import Base
 class Model(Base):
     __tablename__ = "models"
 
-    id = Column(Integer, primary_key=True, index=True)
-    model_id = Column(String, unique=True, index=True)
-    model_version = Column(String)
-    is_active = Column(Boolean, default=True)
+    id = Column(BIGINT, primary_key=True, index=True)
+    model_id = Column(TEXT, unique=True, index=True)
+    model_version = Column(TEXT)
+    is_active = Column(BOOLEAN, default=True)
 
     opinions = relationship("Opinion", back_populates="owner")
 
@@ -19,10 +19,10 @@ class Model(Base):
 class Opinion(Base):
     __tablename__ = "opinions"
 
-    id = Column(Integer, primary_key=True, index=True)
-    is_good = Column(Boolean, default=True)
+    id = Column(BIGINT, primary_key=True, index=True)
+    is_good = Column(BOOLEAN, default=True)
     # request_id = Column(Integer, ForeignKey("requests.id"))
-    owner_id = Column(Integer, ForeignKey("models.id"))
+    owner_id = Column(BIGINT, ForeignKey("models.id"))
 
     owner = relationship("Model", back_populates="opinions")
     # request = relationship("Request", back_populates="opinion")
