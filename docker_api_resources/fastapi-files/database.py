@@ -10,7 +10,7 @@ env_port = os.environ['PGPORT']
 env_database = os.environ['PGDATABASE']
 env_user = os.environ['PGUSER']
 env_pass = os.environ['PGPASSWORD']
-SQLALCHEMY_DATABASE_URL = 'postgresql://' + env_user + ':' + env_pass + '@' + env_host + ':' + env_port + '/' + env_database #"postgresql://postgres:admin@localhost:5432/mlflow"
+SQLALCHEMY_DATABASE_URL = 'mysql://' + env_user + ':' + env_pass + '@' + env_host + ':' + env_port + '/' + env_database #"postgresql://postgres:admin@localhost:5432/mlflow"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, 
