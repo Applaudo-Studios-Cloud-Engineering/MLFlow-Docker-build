@@ -33,4 +33,4 @@ ENTRYPOINT ["/usr/bin/env"]
 CMD ["bash", "/opt/fastapi/scripts/run.sh"]
 
 # docker build -t mleon96/mlflow-mnist-fastapi:latest -t mleon96/mlflow-mnist-fastapi:1.1.3 .\docker_api_resources
-# docker run -d -p 8000:8000 -e MLFLOW_ENDPOINT='http://172.17.0.2:5000' -e POSTGRES_ENDPOINT="postgresql://postgres:admin@host.docker.internal:5432/mlflow"  mleon96/mlflow-mnist-fastapi:latest
+# docker run -d -p 8000:8000 -e MLFLOW_ENDPOINT='http://172.17.0.2:5000' -e PGHOST='host.docker.internal' -e PGPORT='5432' -e PGDATABASE='mlflow' -e PGUSER='postgres' -e PGPASSWORD='admin'  mleon96/mlflow-mnist-fastapi:latest
