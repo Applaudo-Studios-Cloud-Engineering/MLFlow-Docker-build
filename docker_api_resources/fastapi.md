@@ -1,4 +1,10 @@
-# Resources needed for building and running fastapi image
+FastAPI Application Documentation
+=================================
+
+Introduction
+------------
+
+This application is a FastAPI based REST API that provides functionality for registering and querying machine learning models and their opinions. In addition, the application also provides an endpoint to invoke a deployed model for a given input dataframe.
 
 This code consumes a given endpoint and a given database url for a better handling of the data used for the prediction and an easier representation of the called needed at the moment of integrating said solution.
 
@@ -22,14 +28,6 @@ The first files are the ones used for the correct build of the images and the on
 
 The file used for the Docker image contains the instructions needed for the installation of the required libraries and the versions used for a stable deployment and the copy of the needed files with emphasis in the run.sh that is the file handling the startup of the application server used.
 
-FastAPI Application Documentation
-=================================
-
-Introduction
-------------
-
-This application is a FastAPI based REST API that provides functionality for registering and querying machine learning models and their opinions. In addition, the application also provides an endpoint to invoke a deployed model for a given input dataframe.
-
 Installation
 ------------
 
@@ -37,30 +35,26 @@ The following instructions are for setting up the application on a local machine
 
 ### Requirements
 
-*   Python 3.7 or higher
+* Python 3.7 or higher
 
 ### Steps
 
-1.  Clone the repository:
-    
+1. Clone the repository:
+
     shellCopy code
-    
-    `$ git clone https://github.com/<your_username>/fastapi-sqlalchemy-example.git $ cd fastapi-sqlalchemy-example`
-    
-2.  Install the requirements:
-    
-    rubyCopy code
-    
+
+    `$ git clone https://github.com/Applaudo-Studios-Cloud-Engineering/MLFlow-Docker-build`
+    `$ cd .\docker_api_resources\fastapi-files\`
+
+2. Install the requirements:
+
     `$ pip install -r requirements.txt`
-    
-3.  Start the server:
-    
-    luaCopy code
-    
+
+3. Start the server:
+
     `$ uvicorn sql_app.main:app --reload`
-    
+
     The above command will start the server at `http://localhost:8000`.
-    
 
 API Documentation
 -----------------
@@ -77,8 +71,8 @@ Endpoint to retrieve all registered models.
 
 **Request Parameters**:
 
-*   `skip` (optional): The number of models to skip. Default is 0.
-*   `limit` (optional): The maximum number of models to retrieve. Default is 100.
+* `skip` (optional): The number of models to skip. Default is 0.
+* `limit` (optional): The maximum number of models to retrieve. Default is 100.
 
 **Response**: Returns a list of `Model` objects.
 
@@ -92,7 +86,7 @@ Endpoint to retrieve a registered model by ID.
 
 **Request Parameters**:
 
-*   `model_id`: The ID of the model to retrieve.
+* `model_id`: The ID of the model to retrieve.
 
 **Response**: Returns a `Model` object.
 
@@ -120,7 +114,7 @@ Endpoint to add an opinion to a model.
 
 **Request Parameters**:
 
-*   `model_id`: The ID of the model to add the opinion to.
+* `model_id`: The ID of the model to add the opinion to.
 
 **Response**: Returns the newly created `Opinion` object.
 
@@ -134,8 +128,8 @@ Endpoint to retrieve all opinions.
 
 **Request Parameters**:
 
-*   `skip` (optional): The number of opinions to skip. Default is 0.
-*   `limit` (optional): The maximum number of opinions to retrieve. Default is 100.
+* `skip` (optional): The number of opinions to skip. Default is 0.
+* `limit` (optional): The maximum number of opinions to retrieve. Default is 100.
 
 **Response**: Returns a list of `Opinion` objects.
 
@@ -156,8 +150,8 @@ Dependencies
 
 The application uses the following dependencies:
 
-*   `FastAPI` for building the REST API.
-*   `SQLAlchemy` for database operations.
-*   `Pydantic` for data validation.
-*   `requests` for making HTTP requests.
-*   `uvicorn` for running the application server.
+* `FastAPI` for building the REST API.
+* `SQLAlchemy` for database operations.
+* `Pydantic` for data validation.
+* `requests` for making HTTP requests.
+* `uvicorn` for running the application server.
