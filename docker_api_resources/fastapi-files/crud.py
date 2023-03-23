@@ -34,3 +34,10 @@ def create_model_opinion(db: Session, opinion: schemas.OpinionCreate, model_id: 
     db.commit()
     db.refresh(db_item)
     return db_item
+
+def create_request(db: Session, request: schemas.RequestBase):
+    db_request = models.Request(**request.dict())
+    db.add(db_request)
+    db.commit()
+    db.refresh(db_request)
+    return db_request

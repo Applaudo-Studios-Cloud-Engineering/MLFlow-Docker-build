@@ -3,8 +3,30 @@ from typing import Union
 from pydantic import BaseModel
 from typing import List
 
+
+class RequestBase(BaseModel):
+    Gender: str
+    Married: str
+    Dependents: str
+    Education: str
+    Self_Employed: str
+    ApplicantIncome: float
+    CoapplicantIncome: float
+    LoanAmount: float
+    Loan_Amount_Term: float
+    Credit_History: float
+    Property_Area: float
+    Total_Income: float
+
+class Request(RequestBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
 class OpinionBase(BaseModel):
     is_good: bool
+    request_id: int
     # description: Union[str, None] = None
 
 
@@ -15,6 +37,8 @@ class OpinionCreate(OpinionBase):
 class Opinion(OpinionBase):
     id: int
     owner_id: int
+    request_id: int
+    request: Request
 
     class Config:
         orm_mode = True
@@ -36,20 +60,6 @@ class Model(ModelBase):
 
     class Config:
         orm_mode = True
-
-class Columns(BaseModel):
-    Gender: str
-    Married: str
-    Dependents: str
-    Education: str
-    Self_Employed: str
-    ApplicantIncome: float
-    CoapplicantIncome: float
-    LoanAmount: float
-    Loan_Amount_Term: float
-    Credit_History: float
-    Property_Area: float
-    Total_Income: float
 
 class Item(BaseModel):
     columns: List[str] #Columns
@@ -73,3 +83,4 @@ class ResponseFormatted(BaseModel):
 
 class ResponseJson(BaseModel):
     response: str
+    id: int

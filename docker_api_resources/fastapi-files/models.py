@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float,BIGINT, TEXT ,BOOLEAN
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float,BIGINT, TEXT ,BOOLEAN, FLOAT
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -21,27 +21,27 @@ class Opinion(Base):
 
     id = Column(BIGINT, primary_key=True, index=True)
     is_good = Column(BOOLEAN, default=True)
-    # request_id = Column(Integer, ForeignKey("requests.id"))
+    request_id = Column(BIGINT, ForeignKey("requests.id"))
     owner_id = Column(BIGINT, ForeignKey("models.id"))
 
     owner = relationship("Model", back_populates="opinions")
-    # request = relationship("Request", back_populates="opinion")
+    request = relationship("Request", back_populates="opinion")
 
-# class Request(Base):
-#     __tablename__ = "requests"
+class Request(Base):
+    __tablename__ = "requests"
 
-#     id = Column(Integer, primary_key=True, index=True)
-#     Gender = Column(String)
-#     Married = Column(String)
-#     Dependents = Column(String)
-#     Education = Column(String)
-#     Self_Employed = Column(String)
-#     ApplicantIncome = Column(Float)
-#     CoapplicantIncome = Column(Float)
-#     LoanAmount = Column(Float)
-#     Loan_Amount_Term = Column(Float)
-#     Credit_History = Column(Float)
-#     Property_Area = Column(Float)
-#     Total_Income = Column(Float)
+    id = Column(BIGINT, primary_key=True, index=True)
+    Gender = Column(TEXT)
+    Married = Column(TEXT)
+    Dependents = Column(TEXT)
+    Education = Column(TEXT)
+    Self_Employed = Column(TEXT)
+    ApplicantIncome = Column(FLOAT)
+    CoapplicantIncome = Column(FLOAT)
+    LoanAmount = Column(FLOAT)
+    Loan_Amount_Term = Column(FLOAT)
+    Credit_History = Column(FLOAT)
+    Property_Area = Column(FLOAT)
+    Total_Income = Column(FLOAT)
 
-#     opinion = relationship("Opinion", back_populates="request")
+    opinion = relationship("Opinion", back_populates="request")
