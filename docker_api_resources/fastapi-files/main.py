@@ -120,7 +120,7 @@ def invocations(item1: schemas.RequestInvocations):
 #     return response.json()
 
 @app.post("/invocations2", response_model=schemas.ResponseJson)
-def invocations2(item1: schemas.Columns):
+def invocations2(item1: schemas.RequestBase, db: Session = Depends(get_db)):
     list = []
     aux = []
     columns = []
@@ -167,8 +167,9 @@ def invocations2(item1: schemas.Columns):
     item2 = schemas.RequestInvocationsFormatted(dataframe_split=schemas.ItemFormatted(columns=columns,data=list))
     json = jsonable_encoder(item2)
     env = os.environ['MLFLOW_ENDPOINT']
-    
-    print(env)
+    db_model = crud.create_request(db=db, request=item1)
+    # print(env)
+    # print(db_model)
     response = requests.post((env + '/invocations'), json=json)
 
     responseJson= schemas.Response(predictions=response.json().get('predictions'))
@@ -177,4 +178,4 @@ def invocations2(item1: schemas.Columns):
     for value in responseJson.predictions:
         response = "No" if value == 0 else "Yes"
 
-    return schemas.ResponseJson(response=response)
+    return schemas.ResponseJson(response=response,id=db_model.id)
